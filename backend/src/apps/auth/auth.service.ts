@@ -86,9 +86,7 @@ export class AuthService {
 
       delete user.password;
 
-      const { tokenId } = await this.jwt.signToken(user);
-
-      const { refreshTokenId } = await this.jwt.signRefreshToken(user);
+      const { token } = await this.jwt.signToken(user);
 
       await this.actionlogger.logAction(
         {
@@ -107,8 +105,7 @@ export class AuthService {
         message: 'Login successful',
         data: {
           user,
-          tokenId,
-          refreshTokenId,
+          token,
         },
       };
     } catch (error) {
@@ -123,7 +120,6 @@ export class AuthService {
   async logout(token, refreshToken, issuer: Users) {
     try {
       await this.redis.delete('USER-AUTH-TOKEN', token);
-      await this.redis.delete('USER-REFRESH-TOKEN', refreshToken);
 
       await this.actionlogger.logAction(
         {
