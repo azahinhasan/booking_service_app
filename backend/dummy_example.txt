@@ -1,0 +1,20 @@
+
+Post - http://localhost:4000/api/v1/order
+{
+  "userId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "orderQuantity": 2,
+      "unitPrice": 50.0,
+      "discount": 5.0
+    },
+    {
+      "productId": 2,
+      "orderQuantity": 1,
+      "unitPrice": 30.0,
+      "discount": 0.0
+    }
+  ]
+}
+
