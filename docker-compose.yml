@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: booking_sheba
+      POSTGRES_DB: booking_service_zahin
     ports:
       - "5432:5432"
     volumes:
@@ -27,7 +27,7 @@ services:
       - "3010:3010"
     environment:
       - TARGET_ENV=development
-      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/booking_sheba
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/booking_service_zahin
       - REDIS_HOST=redis
     depends_on:
       - postgres

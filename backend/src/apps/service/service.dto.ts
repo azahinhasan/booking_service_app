@@ -1,5 +1,5 @@
 // create-service.dto.ts
-import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean,Min } from 'class-validator';
 
 export class CreateServiceDto {
   @IsString()
@@ -9,6 +9,7 @@ export class CreateServiceDto {
   category: string;
 
   @IsNumber()
+  @Min(0, { message: 'Price cannot be less than 0' }) 
   price: number;
 
   @IsString()

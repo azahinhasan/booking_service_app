@@ -2,7 +2,6 @@
   "name": "nestjs-starter-package",
   "version": "0.0.1",
   "description": "Starter package for nestjs including postgresql with prisma and authentication using redis",
-  "author": "Syed Asim Anwar",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

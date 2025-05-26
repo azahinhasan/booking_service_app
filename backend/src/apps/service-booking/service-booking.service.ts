@@ -26,19 +26,7 @@ export class ServiceBookingService {
           serviceId: dto.serviceId,
         },
       });
-
-      await this.actionLogger.logAction(
-        {
-          referenceId: booking.id,
-          refereceType: 'SERVICE_BOOKING',
-          action: 'CREATE',
-          context: 'ServiceBookingService - createBooking',
-          description: `Booking for ${booking.customerName} created`,
-          additionalInfo: null,
-        },
-        null,
-      );
-
+      
       return {
         status: 201,
         message: 'Booking created successfully',
@@ -158,7 +146,7 @@ export class ServiceBookingService {
           refereceType: 'SERVICE_BOOKING',
           action: 'UPDATE',
           context: 'ServiceBookingService - updateBooking',
-          description: `Booking ${updated.bookingUid} updated`,
+          description: `Booking ${updated.id} updated`,
           additionalInfo: null,
         },
         userId,
@@ -196,7 +184,7 @@ export class ServiceBookingService {
           refereceType: 'SERVICE_BOOKING',
           action: 'DELETE',
           context: 'ServiceBookingService - deleteBooking',
-          description: `Booking ${booking.bookingUid} deleted`,
+          description: `Booking ${booking.id} deleted`,
           additionalInfo: null,
         },
         userId,

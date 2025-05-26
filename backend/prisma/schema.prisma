@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Try_Prisma_Accelerate:https://pris.ly/cli/accelerate-init
 
 generator client {
   provider        = "prisma-client-js"
@@ -33,7 +33,6 @@ model Users {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  serviceBookings ServiceBooking[]
   roleId        Int
   roleInfo      Roles    @relation(fields: [roleId], references: [id])
 
@@ -56,17 +55,17 @@ model Service {
 }
 
 model ServiceBooking {
-  id           Int      @id @default(autoincrement())
-  status       BookingStatus @default(PENDING)
-
-  customerId   Int
-  customer     Users    @relation(fields: [customerId], references: [id])
+  id           Int            @id @default(autoincrement())
+  customerName String
+  phone        String
+  status       BookingStatus  @default(PENDING)
+  emailSent    Boolean?       @default(false)
 
   serviceId    Int
-  service      Service  @relation(fields: [serviceId], references: [id])
+  service      Service @relation(fields: [serviceId], references: [id])
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("service_bookings")
 }
