@@ -3,7 +3,7 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientUnknownRequestError,
 } from '@prisma/client/runtime/library';
-import { PrismaService } from 'src/modules/prisma/prisma.service';
+import { PrismaService } from '../src/modules/prisma/prisma.service';
 
 @Injectable()
 export class ErrorLogger {

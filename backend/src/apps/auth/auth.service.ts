@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { RedisService } from 'src/modules/redis/redis.service';
+import { PrismaService } from '../../modules/prisma/prisma.service';
+import { RedisService } from '../../modules/redis/redis.service';
 import { ActionLogger } from 'utils/action-logger';
 import { Decoder } from 'utils/decoder';
 import { Environment } from 'utils/env';
 import { ErrorLogger } from 'utils/error-logger';
-import { Jwt } from 'utils/jwt';
+import { Jwt } from '../../../utils/jwt';
 import { AuthDto } from './auth.dto';
 import * as argon from 'argon2';
 import { Users } from '@prisma/client';

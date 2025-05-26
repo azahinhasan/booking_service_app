@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { ActionLogger } from 'utils/action-logger';
-import { ErrorLogger } from 'utils/error-logger';
+import { PrismaService } from '../../modules/prisma/prisma.service';
+import { ActionLogger } from '../../../utils/action-logger';
+import { ErrorLogger } from '../../../utils/error-logger';
 import { CreateServiceDto, UpdateServiceDto } from './service.dto';
-import { PaginationDto } from 'src/lib/dtos/pagination.dto';
+import { PaginationDto } from '../../lib/dtos/pagination.dto';
+import { RedisService } from '../../modules/redis/redis.service';
 
 @Injectable()
 export class ServiceService {
   constructor(
     private prisma: PrismaService,
     private actionLogger: ActionLogger,
-    private errorLogger: ErrorLogger,
+    private errorLogger: ErrorLogger
   ) {}
 
   async createService(dto: CreateServiceDto, userId: number) {

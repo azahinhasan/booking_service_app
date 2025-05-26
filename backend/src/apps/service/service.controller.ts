@@ -13,10 +13,10 @@ import {
 import { ServiceService } from './service.service';
 import { CreateServiceDto, UpdateServiceDto } from './service.dto';
 import { Response } from 'express';
-import { AuthGuard, RolesGuard } from 'src/guards';
-import { Roles } from 'src/decorators/roles.decorator';
-import { GetIssuer } from 'src/decorators';
-import { PaginationDto } from 'src/lib/dtos/pagination.dto';
+import { AuthGuard, RolesGuard } from '../../guards';
+import { Roles } from '../../decorators/roles.decorator';
+import { GetIssuer } from '../../decorators';
+import { PaginationDto } from '../../lib/dtos/pagination.dto';
 import { Users } from '@prisma/client';
 
 const allowedRolesMutation = [

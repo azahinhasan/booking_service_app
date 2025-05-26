@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { ActionLogger } from 'utils/action-logger';
-import { ErrorLogger } from 'utils/error-logger';
-import { CreateServiceBookingDto, UpdateServiceBookingDto } from './service-booking.dto';
+import { PrismaService } from '../../modules/prisma/prisma.service';
+import { ActionLogger } from '../../../utils/action-logger';
+import { ErrorLogger } from '../../../utils/error-logger';
+import {
+  CreateServiceBookingDto,
+  UpdateServiceBookingDto,
+} from './service-booking.dto';
 import { PaginationDto } from 'src/lib/dtos/pagination.dto';
 
 @Injectable()
@@ -13,7 +16,7 @@ export class ServiceBookingService {
     private errorLogger: ErrorLogger,
   ) {}
 
-  async createBooking(dto: CreateServiceBookingDto, userId: number) {
+  async createBooking(dto: CreateServiceBookingDto) {
     try {
       const booking = await this.prisma.serviceBooking.create({
         data: {
@@ -33,7 +36,7 @@ export class ServiceBookingService {
           description: `Booking for ${booking.customerName} created`,
           additionalInfo: null,
         },
-        userId,
+        null,
       );
 
       return {
@@ -106,9 +109,40 @@ export class ServiceBookingService {
     }
   }
 
-  async updateBooking(id: number, dto: UpdateServiceBookingDto, userId: number) {
+  async getStatusById(id: number) {
     try {
-      const existing = await this.prisma.serviceBooking.findUnique({ where: { id } });
+      const booking = await this.prisma.serviceBooking.findUnique({
+        where: { id },
+        include: { service: true },
+      });
+
+      if (!booking) {
+        return { status: 404, message: 'Booking not found' };
+      }
+
+      return {
+        status: 200,
+        message: 'Booking fetched successfully',
+        data: booking.status,
+      };
+    } catch (error) {
+      return this.errorLogger.errorlogger({
+        errorMessage: 'Error fetching booking by ID',
+        errorStack: error,
+        context: 'ServiceBookingService - getBookingById',
+      });
+    }
+  }
+
+  async updateBooking(
+    id: number,
+    dto: UpdateServiceBookingDto,
+    userId: number,
+  ) {
+    try {
+      const existing = await this.prisma.serviceBooking.findUnique({
+        where: { id },
+      });
       if (!existing) {
         return { status: 404, message: 'Booking not found' };
       }
@@ -146,7 +180,9 @@ export class ServiceBookingService {
 
   async deleteBooking(id: number, userId: number) {
     try {
-      const booking = await this.prisma.serviceBooking.findUnique({ where: { id } });
+      const booking = await this.prisma.serviceBooking.findUnique({
+        where: { id },
+      });
 
       if (!booking) {
         return { status: 404, message: 'Booking not found' };

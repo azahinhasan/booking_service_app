@@ -81,4 +81,14 @@ export class Jwt {
       tokenId,
     };
   }
+
+    async verifyToken(token: string): Promise<any> {
+    try {
+      return await this.jwt.verifyAsync(token, {
+        secret: this.config.get('JWT_SECRET'),
+      });
+    } catch (error) {
+      throw new Error('Token verification failed');
+    }
+  }
 }

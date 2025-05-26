@@ -13,10 +13,10 @@ import {
 import { Response } from 'express';
 import { ServiceBookingService } from './service-booking.service';
 import { CreateServiceBookingDto, UpdateServiceBookingDto } from './service-booking.dto';
-import { PaginationDto } from 'src/lib/dtos/pagination.dto';
-import { AuthGuard, RolesGuard } from 'src/guards';
-import { Roles } from 'src/decorators/roles.decorator';
-import { GetIssuer } from 'src/decorators';
+import { PaginationDto } from '../../lib/dtos/pagination.dto';
+import { AuthGuard, RolesGuard } from '../../guards';
+import { Roles } from '../../decorators/roles.decorator';
+import { GetIssuer } from '../../decorators';
 import { Users } from '@prisma/client';
 
 const allowedRolesMutation = [
@@ -33,10 +33,9 @@ export class ServiceBookingController {
   @Post()
   async create(
     @Body() dto: CreateServiceBookingDto,
-    @GetIssuer() issuer: Users,
     @Res() res: Response,
   ) {
-    const result = await this.serviceBookingService.createBooking(dto, issuer.id);
+    const result = await this.serviceBookingService.createBooking(dto);
     return res.status(result.status).json(result);
   }
 
@@ -51,11 +50,19 @@ export class ServiceBookingController {
     return res.status(result.status).json(result);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
   @Get(':id')
   async findOne(@Param('id') id: number, @Res() res: Response) {
     const result = await this.serviceBookingService.getBookingById(Number(id));
     return res.status(result.status).json(result);
   }
+  
+  @Get('get-status/:id')
+  async getStatusById(@Param('id') id: number, @Res() res: Response) {
+    const result = await this.serviceBookingService.getStatusById(Number(id));
+    return res.status(result.status).json(result);
+  }
+
 
   @UseGuards(AuthGuard, RolesGuard)
   @Put(':id')
