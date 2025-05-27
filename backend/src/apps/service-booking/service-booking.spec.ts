@@ -4,10 +4,16 @@ import { PrismaService } from '../../modules/prisma/prisma.service';
 import { ActionLogger } from '../../../utils/action-logger';
 import { ErrorLogger } from '../../../utils/error-logger';
 import { CreateServiceBookingDto } from './service-booking.dto';
+import { EmailService } from '../../../utils/email';
 
 describe('ServiceBookingService', () => {
   let serviceBookingService: ServiceBookingService;
   let prismaService: PrismaService;
+  let emailService: EmailService;
+
+  const mockEmailService = {
+    sendBookingConfirmation: jest.fn(),
+  };
 
   const mockPrismaService = {
     serviceBooking: {
@@ -34,10 +40,13 @@ describe('ServiceBookingService', () => {
         { provide: PrismaService, useValue: mockPrismaService },
         { provide: ActionLogger, useValue: mockActionLogger },
         { provide: ErrorLogger, useValue: mockErrorLogger },
+        { provide: EmailService, useValue: mockEmailService },
       ],
     }).compile();
 
-    serviceBookingService = module.get<ServiceBookingService>(ServiceBookingService);
+    serviceBookingService = module.get<ServiceBookingService>(
+      ServiceBookingService,
+    );
     prismaService = module.get<PrismaService>(PrismaService);
   });
 
@@ -50,12 +59,14 @@ describe('ServiceBookingService', () => {
       const dto: CreateServiceBookingDto = {
         customerName: 'John Doe',
         phone: '+88012345678911',
-        serviceId: 1
+        email: 'test@test.com',
+        serviceId: 1,
       };
       const mockBooking = {
         id: 1,
         customerName: 'John Doe',
         phone: '+88012345678911',
+        email: 'test2@test.com',
         serviceId: 1,
         status: 'PENDING',
       };
@@ -68,6 +79,7 @@ describe('ServiceBookingService', () => {
         data: {
           customerName: dto.customerName,
           phone: dto.phone,
+          email: dto.email,
           status: 'PENDING',
           serviceId: dto.serviceId,
         },
@@ -89,7 +101,9 @@ describe('ServiceBookingService', () => {
         status: 'PENDING',
       };
 
-      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(mockBooking);
+      mockPrismaService.serviceBooking.findUnique.mockResolvedValue(
+        mockBooking,
+      );
 
       const result = await serviceBookingService.getStatusById(bookingId);
 

@@ -8,7 +8,7 @@ import {
   UpdateServiceBookingDto,
 } from './service-booking.dto';
 import { PaginationDto } from 'src/lib/dtos/pagination.dto';
-import { EmailService } from 'utils/email';
+import { EmailService } from '../../../utils/email';
 
 @Injectable()
 export class ServiceBookingService {
