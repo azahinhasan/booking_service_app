@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsEnum,IsPhoneNumber } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsEnum,IsPhoneNumber, IsEmail } from 'class-validator';
 
 export enum BookingStatus {
   PENDING = 'PENDING',
@@ -12,8 +12,12 @@ export class CreateServiceBookingDto {
 
   @IsString()
   @IsPhoneNumber()
-  phone: string;
+  phone?: string;
 
+  @IsString()
+  @IsEmail()
+  email: string;
+  
   @IsNumber()
   serviceId: number;
 

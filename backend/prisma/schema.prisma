@@ -57,7 +57,8 @@ model Service {
 model ServiceBooking {
   id           Int            @id @default(autoincrement())
   customerName String
-  phone        String
+  phone        String?
+  email        String
   status       BookingStatus  @default(PENDING)
   emailSent    Boolean?       @default(false)
 

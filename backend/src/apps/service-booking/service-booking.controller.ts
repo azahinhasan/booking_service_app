@@ -12,7 +12,10 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ServiceBookingService } from './service-booking.service';
-import { CreateServiceBookingDto, UpdateServiceBookingDto } from './service-booking.dto';
+import {
+  CreateServiceBookingDto,
+  UpdateServiceBookingDto,
+} from './service-booking.dto';
 import { PaginationDto } from '../../lib/dtos/pagination.dto';
 import { AuthGuard, RolesGuard } from '../../guards';
 import { Roles } from '../../decorators/roles.decorator';
@@ -31,10 +34,7 @@ export class ServiceBookingController {
   constructor(private readonly serviceBookingService: ServiceBookingService) {}
 
   @Post()
-  async create(
-    @Body() dto: CreateServiceBookingDto,
-    @Res() res: Response,
-  ) {
+  async create(@Body() dto: CreateServiceBookingDto, @Res() res: Response) {
     const result = await this.serviceBookingService.createBooking(dto);
     return res.status(result.status).json(result);
   }
@@ -56,13 +56,12 @@ export class ServiceBookingController {
     const result = await this.serviceBookingService.getBookingById(Number(id));
     return res.status(result.status).json(result);
   }
-  
+
   @Get('get-status/:id')
   async getStatusById(@Param('id') id: number, @Res() res: Response) {
     const result = await this.serviceBookingService.getStatusById(Number(id));
     return res.status(result.status).json(result);
   }
-
 
   @UseGuards(AuthGuard, RolesGuard)
   @Put(':id')
@@ -72,7 +71,27 @@ export class ServiceBookingController {
     @GetIssuer() issuer: Users,
     @Res() res: Response,
   ) {
-    const result = await this.serviceBookingService.updateBooking(Number(id), dto, issuer.id);
+    const result = await this.serviceBookingService.updateBooking(
+      Number(id),
+      dto,
+      issuer.id,
+    );
+    return res.status(result.status).json(result);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Put('status-update/:id')
+  async updateStatus(
+    @Param('id') id: number,
+    @Body('status') status: string,
+    @GetIssuer() issuer: Users,
+    @Res() res: Response,
+  ) {
+    const result = await this.serviceBookingService.updateBookingStatus(
+      Number(id),
+      status.toUpperCase(),
+      issuer.id,
+    );
     return res.status(result.status).json(result);
   }
 
@@ -83,7 +102,10 @@ export class ServiceBookingController {
     @GetIssuer() issuer: Users,
     @Res() res: Response,
   ) {
-    const result = await this.serviceBookingService.deleteBooking(Number(id), issuer.id);
+    const result = await this.serviceBookingService.deleteBooking(
+      Number(id),
+      issuer.id,
+    );
     return res.status(result.status).json(result);
   }
 }

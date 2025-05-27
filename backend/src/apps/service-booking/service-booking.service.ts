@@ -3,10 +3,12 @@ import { PrismaService } from '../../modules/prisma/prisma.service';
 import { ActionLogger } from '../../../utils/action-logger';
 import { ErrorLogger } from '../../../utils/error-logger';
 import {
+  BookingStatus,
   CreateServiceBookingDto,
   UpdateServiceBookingDto,
 } from './service-booking.dto';
 import { PaginationDto } from 'src/lib/dtos/pagination.dto';
+import { EmailService } from 'utils/email';
 
 @Injectable()
 export class ServiceBookingService {
@@ -14,6 +16,7 @@ export class ServiceBookingService {
     private prisma: PrismaService,
     private actionLogger: ActionLogger,
     private errorLogger: ErrorLogger,
+    private emailService: EmailService,
   ) {}
 
   async createBooking(dto: CreateServiceBookingDto) {
@@ -21,12 +24,13 @@ export class ServiceBookingService {
       const booking = await this.prisma.serviceBooking.create({
         data: {
           customerName: dto.customerName,
-          phone: dto.phone,
+          phone: dto.phone ?? '',
+          email: dto.email,
           status: dto.status ?? 'PENDING',
           serviceId: dto.serviceId,
         },
       });
-      
+
       return {
         status: 201,
         message: 'Booking created successfully',
@@ -43,17 +47,24 @@ export class ServiceBookingService {
 
   async getAllBookings(pagination: PaginationDto) {
     try {
-      const { page, limit } = pagination;
+      const { page, limit, status } = pagination;
       const skip = (page - 1) * limit;
+
+      const whereClause = status
+        ? { status: status.toUpperCase() as BookingStatus }
+        : {};
 
       const bookings = await this.prisma.serviceBooking.findMany({
         skip,
         take: limit,
         orderBy: { id: 'desc' },
+        where: whereClause,
         include: { service: true },
       });
 
-      const totalCount = await this.prisma.serviceBooking.count();
+      const totalCount = await this.prisma.serviceBooking.count({
+        where: whereClause,
+      });
 
       return {
         status: 200,
@@ -162,6 +173,81 @@ export class ServiceBookingService {
         errorMessage: 'Failed to update booking',
         errorStack: error,
         context: 'ServiceBookingService - updateBooking',
+      });
+    }
+  }
+
+  async updateBookingStatus(id: number, status: string, userId: number) {
+    try {
+      if (!Object.values(BookingStatus).includes(status as BookingStatus)) {
+        return { status: 400, message: 'Invalid status value' };
+      }
+
+      const existing = await this.prisma.serviceBooking.findUnique({
+        where: { id },
+        include: { service: true },
+      });
+
+      if (!existing) {
+        return { status: 404, message: 'Booking not found' };
+      }
+
+      const updated = await this.prisma.serviceBooking.update({
+        where: { id },
+        data: { status: status as BookingStatus },
+      });
+
+      if (status === BookingStatus.CONFIRMED && existing?.email) {
+        let temp = await this.emailService.sendConfirmationEmail(
+          existing.email,
+          updated.id,
+          existing.service.name,
+          existing.service.price,
+        );
+
+        if (temp) {
+          await this.actionLogger.logAction(
+            {
+              referenceId: updated.id,
+              refereceType: 'SERVICE_BOOKING',
+              action: 'UPDATE',
+              context: 'ServiceBookingService - updateBookingStatus email',
+              description: `Email send to ${existing.email}`,
+              additionalInfo: null,
+            },
+            userId,
+          );
+        } else {
+          this.errorLogger.errorlogger({
+            errorMessage: 'Email send failed to ${existing.email}l',
+            errorStack: `}`,
+            context: 'ServiceBookingService - updateBookingStatus email',
+          });
+        }
+      }
+
+      await this.actionLogger.logAction(
+        {
+          referenceId: updated.id,
+          refereceType: 'SERVICE_BOOKING',
+          action: 'UPDATE',
+          context: 'ServiceBookingService - updateBookingStatus',
+          description: `Booking status updated to "${updated.status}"`,
+          additionalInfo: null,
+        },
+        userId,
+      );
+
+      return {
+        status: 200,
+        message: 'Booking status updated successfully',
+        data: updated,
+      };
+    } catch (error) {
+      return this.errorLogger.errorlogger({
+        errorMessage: 'Failed to update booking status',
+        errorStack: error,
+        context: 'ServiceBookingService - updateBookingStatus',
       });
     }
   }
