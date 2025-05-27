@@ -10,6 +10,6 @@ COPY . .
 
 RUN npx prisma generate
 
-EXPOSE 3010
+EXPOSE 5015
 
 CMD ["npm", "run", "run-docker"]

@@ -24,7 +24,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "3010:3010"
+      - "5015:5015"
     environment:
       - TARGET_ENV=development
       - DATABASE_URL=postgresql://postgres:1234@postgres:5432/booking_service_zahin
