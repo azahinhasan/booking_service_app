@@ -64,16 +64,16 @@ Ensure the following are installed:
 ## Milestones
 ### Core Features
 
-- [Service Listing API](#2-get-all-services-paginated-get---authorization-not-required)
-- [Service Booking API](#1-create-or-make-a-booking-post---authorization-not-required)
-- [Booking Status API](#4-get-booking-status-by-id-get---authorization-not-required)
+- [Service Listing API: A paginated API that returns a list of available services with name, category, price, and description.](#2-get-all-services-paginated-get---authorization-not-required)
+- [Service Booking API: Customers can book a service with their name, phone number, and service ID.](#1-create-or-make-a-booking-post---authorization-not-required)
+- [Booking Status API: Customers can check the status of their booking using a unique booking ID.](#4-get-booking-status-by-id-get---authorization-not-required)
 
 ### Bonus Features
 - [Add/edit/delete services](#service-api)
 - [View all bookings](#2-get-all-bookings-paginated-get---authorization-required)
-- Authentication - JWT/session-based for admin endpoints (Need token for some api access can me found into API Documantation)
+- Authentication - JWT/session-based for admin endpoints (Need token for some api access can be found in API Documentation)
 - [Send SMS/email notifications when a booking is confirmed](#6-update-booking-status-put---authorization-required)
-- Dockerize the app (Backend,DB and Redis are docerized)
+- Dockerize the app (Backend,DB and Redis are dockerized)
 
 ### Unit Testing
 [This command](#running-the-test-case) will test follwing cases:
@@ -84,15 +84,15 @@ Ensure the following are installed:
 ---
 ## Running the Test case
 
-Note: for test run user do not need redis or run docker setup or anything. <br/>
-Go to backend folder and run
+Note: for a test run, the user does not need Redis or run the docker setup or anything. <br/>
+Go to the backend folder and run
 
 ```
 npm run test
 ```
 
 
-# API Documantation
+# API Documentation
 
 Note: Here some api required authorization Bearer token. User can get token after successful login. And have to pass with headers 'authorization Bearer token'.
 
